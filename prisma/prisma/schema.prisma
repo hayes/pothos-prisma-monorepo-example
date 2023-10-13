@@ -1,0 +1,42 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../dist"
+}
+
+generator pothos {
+  provider = "prisma-pothos-types"
+
+  clientOutput = "./dist"
+  output       = "../pothos-types.ts"
+  prismaUtils  = true
+}
+
+model Account {
+  id     Int     @id @default(autoincrement())
+  name   String
+  values Value[]
+}
+
+model Value {
+  id        Int      @id @default(autoincrement())
+  value     String
+  date      DateTime // @db.Date
+  account   Account  @relation(fields: [accountId], references: [id])
+  accountId Int
+
+  scores Score[]
+}
+
+model Score {
+  id      Int      @id @default(autoincrement())
+  score   String
+  name    String
+  date    DateTime // @db.Date
+  value   Value    @relation(fields: [valueId], references: [id])
+  valueId Int
+}
